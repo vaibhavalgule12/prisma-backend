@@ -1,0 +1,22 @@
+# Environment
+.env
+
+# Go build artifacts
+/prisma-api
+*.test
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Docker volumes
+pgdata/

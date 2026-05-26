@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL ───────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: prisma_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: prismadb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prisma -d prismadb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Go API Server ─────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prisma_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: prisma
+      DB_PASSWORD: prisma
+      DB_NAME: prismadb
+      DB_SSLMODE: disable
+    ports:
+      - "8080:8080"
+
+  # ── Python ETL Service ────────────────────────────────────────────────────────
+  etl:
+    build:
+      context: ./etl
+      dockerfile: Dockerfile.etl
+    container_name: prisma_etl
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: prisma
+      DB_PASSWORD: prisma
+      DB_NAME: prismadb
+
+volumes:
+  pgdata:
