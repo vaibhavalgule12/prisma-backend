@@ -1,6 +1,6 @@
 # Prisma Factsheet Backend
 
-Backend system powering the [Spring Street Prisma Global Growth](https://springstreet.in/products/prisma/global-growth-prisma) product factsheet — built as part of the Spring Street Backend Engineering Internship assignment.
+Backend system powering the [Prisma Global Growth](https://springstreet.in/products/prisma/global-growth-prisma) product factsheet.
 
 ---
 
